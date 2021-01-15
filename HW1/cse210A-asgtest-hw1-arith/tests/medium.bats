@@ -39,3 +39,23 @@ load harness
 @test "medium-10" {
   check '-1 + -0 * 8' '-1'
 }
+
+@test "custom-1" {
+  check '1 ** 1' '1'
+}
+
+@test "custom-2" {
+  check '1 + 3 * 2 ** 2' '13'
+}
+
+@test "custom-3" {
+  check '-1 * -3 * 2 ** 2' '12'
+}
+
+@test "custom-4" {
+  check '-3 - -4' '1'
+}
+
+@test "custom-5" {
+  check '-1 ** 1 + 10' '9'
+}
