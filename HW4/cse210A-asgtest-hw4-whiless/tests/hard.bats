@@ -99,3 +99,34 @@ load harness
   check 'if ( le * z < x - p ∧ 3 - 2 < 4 * x ) then y := z else y := z - x' '⇒ y := (z-x), {}
 ⇒ skip, {y → 0}'
 }
+
+
+@test "hard-21" {
+  check 'if ( le * z < x - p ∨ 3 - 2 < 4 * x ∨ 0 < 1) then y := z else y := z - x' '⇒ y := z, {}
+⇒ skip, {y → 0}'
+}
+
+
+@test "hard-22" {
+check 'while ( k < 3 ∨ false ) do { k := k + 3 }' '⇒ k := (k+3); while ((k<3)∨false) do { k := (k+3) }, {}
+⇒ skip; while ((k<3)∨false) do { k := (k+3) }, {k → 3}
+⇒ while ((k<3)∨false) do { k := (k+3) }, {k → 3}
+⇒ skip, {k → 3}'
+}
+
+
+@test "hard-23" {
+  check 'while ( k < 3 ∧ false ∨ a + 3 * (-1) + 10 < 12) do { k := k + 3 }' '⇒ skip, {}'
+}
+
+@test "hard-24" {
+check 'a := 12; if ( k < 3 * k ∧ true ∨ a + 3 * 10 < 12 ) then y := z else y := z - x' '⇒ skip; if ((k<(3*k))∧(true∨((a+(3*10))<12))) then { y := z } else { y := (z-x) }, {a → 12}
+⇒ if ((k<(3*k))∧(true∨((a+(3*10))<12))) then { y := z } else { y := (z-x) }, {a → 12}
+⇒ y := (z-x), {a → 12}
+⇒ skip, {a → 12, y → 0}'
+}
+
+@test "hard-25" {
+  check 'if ( (a * b < 3 ∧ 10 < 9) ∨ a + b - 12 * 9 < 0) then a := 1 else a := 2' '⇒ a := 1, {}
+⇒ skip, {a → 1}'
+}

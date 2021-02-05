@@ -182,10 +182,46 @@ def show_if(condition, exp1, exp2):
 
 
 def while_op(condition, exp):
-
+    global rest_of_tree
     while bexp(condition):
         print_show(f"{show(exp)}; {show_while(condition, exp)}")
-        eval(exp)
+        rest_of_tree = show_while(condition, exp)
+
+        def if_while(if_condition, exp1, exp2):
+            if bexp(if_condition):
+                print_show(f"{show(exp1)}; {show_while(condition, exp)}")
+                eval_while(exp1)
+            else:
+                print_show(f"{show(exp2)}; {show_while(condition, exp)}")
+                eval_while(exp2)
+
+        def eval_while(tree):
+            if tree.data == 'assign_var':
+                assign_var(tree.children[0].value, tree.children[1])
+            elif tree.data == 'sequence':
+                if tree.children[1].data == 'assign_var' and tree.children[0].data == 'bracket':
+                    seq = tree.children[0].children[0]
+                    tree.children[0] = seq.children[0]
+                    seq.children[0] = seq.children[1]
+                    seq.children[1] = tree.children[1]
+                    tree.children[1] = seq
+                    eval_while(tree)
+                else:
+                    eval_while(tree.children[0])
+                    print_show(f"skip; {show(tree.children[1])}; {show_while(condition, exp)}")
+                    print_show(f"{show(tree.children[1])}; {show_while(condition, exp)}")
+                    eval_while(tree.children[1])
+            elif tree.data == 'if_op':
+                if_while(tree.children[0], tree.children[1], tree.children[2])
+            elif tree.data == 'while_op':
+                while_op(tree.children[0], tree.children[1])
+            elif tree.data == 'bracket':
+                eval_while(tree.children[0])
+            elif tree.data == 'skip_op':
+                pass
+            else:
+                raise KeyError()
+        eval_while(exp)
         print_show(f"skip; {show_while(condition, exp)}")
         print_show(f"{show_while(condition, exp)}")
 
@@ -277,16 +313,16 @@ def get_state():
 
 
 def main():
-    # for line in sys.stdin:
-    #     tree = calc(line)
-    #     eval(tree)
+    for line in sys.stdin:
+        tree = calc(line)
+        eval(tree)
+    if not skip_only:
+        print_show("skip")
+    # tree = calc("a := 98 ; b := 76 ; while ¬ ( a = b ) do { if a < b then b := b - a else a := a - b }\n")
+    # eval(tree)
     # if not skip_only:
     #     print_show("skip")
-    tree = calc(" k := ( 49 ) * 3 + k\n")
-    print(tree)
-    eval(tree)
-    print("⇒ " + show(tree) + ", ")
-    print(state)
+
 
 
 if __name__ == '__main__':
