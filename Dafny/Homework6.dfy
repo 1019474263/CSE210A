@@ -41,7 +41,7 @@ ensures treeContains(tree, element) <==> listContains(flatten(tree), element)
 	match tree
         case Leaf => {}
         case Node(t1, t2, t) => {
-            listContains(append(Cons(t, flatten(t1)), flatten(t2), element);
+            listContains(append(Cons(t, flatten(t1)), flatten(t2)), element);
             assert listContains(flatten(tree), element)
                 == listContains(append(Cons(t, flatten(t1)), flatten(t2)), element)
                 == listContains(Cons(t, append(flatten(t1), flatten(t2))), element)
